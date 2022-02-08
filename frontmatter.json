@@ -1,5 +1,11 @@
 {
   "$schema": "https://frontmatter.codes/frontmatter.schema.json",
   "frontMatter.framework.id": "other",
-  "frontMatter.content.publicFolder": ""
+  "frontMatter.content.publicFolder": "",
+  "frontMatter.content.pageFolders": [
+    {
+      "title": "_posts",
+      "path": "f:/vscode-workspace/blog/lamsam_blog/source/_posts"
+    }
+  ]
 }
