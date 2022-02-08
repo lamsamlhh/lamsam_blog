@@ -8,7 +8,7 @@ subtitle: ''
 description: ''
 keywords:
 author: Lamsam
-language: zh_CN
+language: zh-CN
 timezone: ''
 
 # URL
@@ -103,5 +103,5 @@ theme: landscape
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/lamsamlhh/lamsam_blog
+  # repo: https://github.com/lamsamlhh/lamsam_blog
   branch: gh-pages
