@@ -70,14 +70,14 @@ name: CI
 on:
   push:
     branches:
-      - hexo
+      - gh-pages
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v1
         with:
           ref: hexo
       - name: Configration hexo repo
