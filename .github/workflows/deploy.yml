@@ -22,47 +22,87 @@
 #           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #           BRANCH: gh-pages # The branch the action should deploy to.
 #           FOLDER: public # The folder the action should deploy.
-name: Deploy
+# name: Deploy
 
-on: [push]
+# on: [push]
 
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     name: A job to deploy blog.
+#     steps:
+#     - name: Checkout
+#       uses: actions/checkout@v2
+#       with:
+#         submodules: true # Checkout private submodules(themes or something else).
+
+#     # Caching dependencies to speed up workflows. (GitHub will remove any cache entries that have not been accessed in over 7 days.)
+#     - name: Setup Node.js
+#       uses: actions/setup-node@v1
+#       with:
+#         node-version: '12' #超过12的版本有几个warning，我不想处理
+
+#     # Deploy hexo blog website.
+#     - name: Setup Hexo
+#       env:
+#         # 定义了一个变量 secrets里面添加的名字
+#         ACTION_DEPLOY_KEY: ${{ secrets.Deploy_Key }} 
+#       run: |
+#           # 创建了一个ssh文件夹
+#           mkdir -p ~/.ssh/
+#           # 把key复制进去
+#           echo "$ACTION_DEPLOY_KEY" > ~/.ssh/id_rsa
+#           chmod 700 ~/.ssh
+#           chmod 600 ~/.ssh/id_rsa
+#           ssh-keyscan github.com >> ~/.ssh/known_hosts
+#           # 配置git
+#           git config --global user.email "lamsamlhh@gmail.com"
+#           git config --global user.name "lamsamlhh"
+#           # 安装hexo
+#           npm install hexo-cli -g
+#           npm install
+
+#     - name: Deploy
+#       run: |
+#         hexo clean
+#         hexo deploy
+name: CI
+on:
+  push:
+    branches:
+      - hexo
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: A job to deploy blog.
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-        submodules: true # Checkout private submodules(themes or something else).
-
-    # Caching dependencies to speed up workflows. (GitHub will remove any cache entries that have not been accessed in over 7 days.)
-    - name: Setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12' #超过12的版本有几个warning，我不想处理
-
-    # Deploy hexo blog website.
-    - name: Setup Hexo
-      env:
-        # 定义了一个变量 secrets里面添加的名字
-        ACTION_DEPLOY_KEY: ${{ secrets.Deploy_Key }} 
-      run: |
-          # 创建了一个ssh文件夹
+      - name: Checkout source
+        uses: actions/checkout@v2
+        with:
+          ref: hexo
+      - name: Configration hexo repo
+        env:
+          ACTION_DEPLOY_KEY: ${{ secrets.HEXO_DEPLOY_PRI }}
+        run: |
           mkdir -p ~/.ssh/
-          # 把key复制进去
-          echo "$ACTION_DEPLOY_KEY" > ~/.ssh/id_rsa
-          chmod 700 ~/.ssh
+          echo "$DEPLOY_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          # 配置git
           git config --global user.email "lamsamlhh@gmail.com"
-          git config --global user.name "lamsamlhh"
-          # 安装hexo
-          npm install hexo-cli -g
-          npm install
-
-    - name: Deploy
-      run: |
-        hexo clean
-        hexo deploy
+          git config --global user.name "lamsamlhh" 
+      - name: Checkout submodules
+        run: |
+          git submodule init
+          git submodule update
+      - name: Use Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v1
+        with:
+          version: ${{ matrix.node_version }}
+      - name: Setup Hexo
+        run: |
+         npm install hexo-cli -g
+         npm install 
+      - name: Hexo deploy
+        run: |
+          hexo clean
+          hexo d
